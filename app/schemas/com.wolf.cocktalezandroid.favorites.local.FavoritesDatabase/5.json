@@ -1,0 +1,82 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 5,
+    "identityHash": "825d136fcfee6a8f8780def9642e2515",
+    "entities": [
+      {
+        "tableName": "favorites_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cocktailId` INTEGER NOT NULL, `name` TEXT NOT NULL, `image` TEXT NOT NULL, `category` TEXT NOT NULL, `alcoholic` TEXT NOT NULL, `glass` TEXT NOT NULL, `instructions` TEXT NOT NULL, `ingredients` TEXT NOT NULL, `measures` TEXT NOT NULL, PRIMARY KEY(`cocktailId`))",
+        "fields": [
+          {
+            "fieldPath": "cocktailId",
+            "columnName": "cocktailId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "alcoholic",
+            "columnName": "alcoholic",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "glass",
+            "columnName": "glass",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "instructions",
+            "columnName": "instructions",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ingredients",
+            "columnName": "ingredients",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "measures",
+            "columnName": "measures",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "cocktailId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '825d136fcfee6a8f8780def9642e2515')"
+    ]
+  }
+}
