@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.wolf.cocktalezandroid.cocktaildetail.data.repository.CocktailDetailsRepository
 import com.wolf.cocktalezandroid.common.data.network.CocktailDbApi
 import com.wolf.cocktalezandroid.common.data.repository.PreferenceRepositoryImpl
 import com.wolf.cocktalezandroid.common.domain.repository.PreferenceRepository
@@ -15,7 +14,11 @@ import com.wolf.cocktalezandroid.common.util.Constants
 import com.wolf.cocktalezandroid.common.util.Constants.BASE_URL
 import com.wolf.cocktalezandroid.common.util.Constants.DATABASE_NAME
 import com.wolf.cocktalezandroid.favorites.local.FavoritesDatabase
+import com.wolf.cocktalezandroid.glass.data.domain.respository.GlassRepositoryImpl
+import com.wolf.cocktalezandroid.glass.domain.repository.GlassRepository
 import com.wolf.cocktalezandroid.home.data.repository.CocktailsRepository
+import com.wolf.cocktalezandroid.ingredients.data.domain.respository.IngredientsRepositoryImpl
+import com.wolf.cocktalezandroid.ingredients.domain.repository.IngredientsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -76,6 +79,16 @@ object AppModule {
     fun provideCocktailRepository(api: CocktailDbApi) = CocktailsRepository(api)
 
 
+    @Provides
+    @Singleton
+    fun provideIngredientsRepository(api: CocktailDbApi): IngredientsRepository =
+        IngredientsRepositoryImpl(api)
+
+
+    @Provides
+    @Singleton
+    fun provideGlassRepository(api: CocktailDbApi): GlassRepository =
+        GlassRepositoryImpl(api)
 
 
     @Provides

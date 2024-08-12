@@ -1,6 +1,6 @@
 package com.wolf.cocktalezandroid.glass.paging
 
-import Drinks
+import Glass
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.wolf.cocktalezandroid.common.data.network.CocktailDbApi
@@ -9,9 +9,9 @@ import java.io.IOException
 
 class GlassSource(
     private val api: CocktailDbApi
-) : PagingSource<Int, Drinks>() {
+) : PagingSource<Int, Glass>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Drinks> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Glass> {
         return try {
             val nextPageNumber = params.key ?: 1
             val response = api.getGlasses()
@@ -27,7 +27,7 @@ class GlassSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, Drinks>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, Glass>): Int? {
         return state.anchorPosition
     }
 }

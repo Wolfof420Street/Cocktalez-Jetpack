@@ -1,7 +1,7 @@
 package com.wolf.cocktalezandroid.home.data.network.dto
 
 import com.google.gson.annotations.SerializedName
-import com.wolf.cocktalezandroid.home.domain.Category
+import com.wolf.cocktalezandroid.home.domain.model.Category
 
 data class CategoryResponse(
     @SerializedName("categories")

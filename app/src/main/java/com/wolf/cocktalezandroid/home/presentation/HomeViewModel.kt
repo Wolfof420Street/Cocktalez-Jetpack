@@ -19,17 +19,38 @@ class CocktailViewModel @Inject constructor(
     private val _cocktailUiState = MutableStateFlow(CocktailUiState())
     val cocktailUiState = _cocktailUiState.asStateFlow()
 
+    fun onTabSelected(tabIndex: Int) {
+
+        _cocktailUiState.update {
+            it.copy(
+                selectedTabIndex = tabIndex
+            )
+        }
+
+    }
+
+
+    fun onSearchQueried(query : String) {
+
+        _cocktailUiState.update {
+            it.copy(
+                searchQuery = query
+            )
+        }
+    }
+
     init {
         getAlcoholicCocktails()
         getNonAlcoholicCocktails()
         getPopularCocktails()
-
     }
+
+
 
     /**
      * Cocktails
      */
-    fun getAlcoholicCocktails() {
+    private fun getAlcoholicCocktails() {
         _cocktailUiState.update {
             it.copy(
                 alcoholicCocktails = cocktailRepository.getAlcoholicCocktails().cachedIn(viewModelScope)
@@ -37,7 +58,7 @@ class CocktailViewModel @Inject constructor(
         }
     }
 
-    fun getNonAlcoholicCocktails() {
+    private fun getNonAlcoholicCocktails() {
         _cocktailUiState.update {
             it.copy(
                 nonAlcoholicCocktails = cocktailRepository.getNonAlcoholicCocktails().cachedIn(viewModelScope)
@@ -45,7 +66,7 @@ class CocktailViewModel @Inject constructor(
         }
     }
 
-    fun getPopularCocktails() {
+   private fun getPopularCocktails() {
         _cocktailUiState.update {
             it.copy(
                 popularCocktails = cocktailRepository.getPopularCocktails().cachedIn(viewModelScope)
