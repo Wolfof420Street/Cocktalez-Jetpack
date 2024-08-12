@@ -1,10 +1,12 @@
 package com.wolf.cocktalezandroid.common.util
 
 import androidx.datastore.preferences.core.intPreferencesKey
+import com.wolf.cocktalezAndroid.BuildConfig.API_KEY
+
 
 object Constants {
 
-    const val BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
+    const val BASE_URL = "https://www.thecocktaildb.com/api/json/v2/${API_KEY}/"
 
     val THEME_OPTIONS = intPreferencesKey(name = "theme_option")
     const val PAGING_SIZE = 20
@@ -14,7 +16,10 @@ object Constants {
 
     const val COCKTALEZ_PREFERENCES = "COCKTALEZ_PREFERENCES"
 
-    const val STARTING_PAGE_INDEX = 0
+   const val INGREDIENT_BASE_URL = "https://www.thecocktaildb.com/images/ingredients/";
+
+
+
 
 
 }

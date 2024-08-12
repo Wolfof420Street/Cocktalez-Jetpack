@@ -9,8 +9,6 @@ import com.wolf.cocktalezandroid.common.data.network.CocktailDbApi
 import com.wolf.cocktalezandroid.common.util.Constants.PAGING_SIZE
 import com.wolf.cocktalezandroid.home.data.paging.AlcoholicCocktailsSource
 import com.wolf.cocktalezandroid.home.data.paging.CategoryCocktailsSource
-import com.wolf.cocktalezandroid.home.data.paging.GlassCocktailsSource
-import com.wolf.cocktalezandroid.home.data.paging.IngredientCocktailsSource
 import com.wolf.cocktalezandroid.home.data.paging.NonAlcoholicCocktailsSource
 import com.wolf.cocktalezandroid.home.data.paging.PopularCocktailsSource
 import kotlinx.coroutines.flow.Flow
@@ -47,14 +45,7 @@ class CocktailsRepository @Inject constructor(private val api: CocktailDbApi) {
         ).flow
     }
 
-    fun getCocktailsByGlass(glass: String): Flow<PagingData<Drinks>> {
-        return Pager(
-            config = PagingConfig(enablePlaceholders = false, pageSize = PAGING_SIZE),
-            pagingSourceFactory = {
-                GlassCocktailsSource(api, glass)
-            }
-        ).flow
-    }
+
 
     fun getCocktailsByCategory(category: String): Flow<PagingData<Drinks>> {
         return Pager(
@@ -65,12 +56,5 @@ class CocktailsRepository @Inject constructor(private val api: CocktailDbApi) {
         ).flow
     }
 
-    fun getCocktailsByIngredient(ingredient: String): Flow<PagingData<Drinks>> {
-        return Pager(
-            config = PagingConfig(enablePlaceholders = false, pageSize = PAGING_SIZE),
-            pagingSourceFactory = {
-                IngredientCocktailsSource(api, ingredient)
-            }
-        ).flow
-    }
+
 }

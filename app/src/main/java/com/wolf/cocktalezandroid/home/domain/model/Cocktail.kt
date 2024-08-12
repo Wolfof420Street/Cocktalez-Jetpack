@@ -36,13 +36,13 @@ data class CocktailObject(
     @SerializedName("strDrinkThumb")
     val strDrinkThumb: String,
     @SerializedName("strIngredient1")
-    val strIngredient1: String,
+    val strIngredient1: String?,
     @SerializedName("strIngredient2")
-    val strIngredient2: String,
+    val strIngredient2: String?,
     @SerializedName("strIngredient3")
-    val strIngredient3: String,
+    val strIngredient3: String?,
     @SerializedName("strIngredient4")
-    val strIngredient4: String,
+    val strIngredient4: String?,
     @SerializedName("strIngredient5")
     val strIngredient5: String?,
     @SerializedName("strIngredient6")

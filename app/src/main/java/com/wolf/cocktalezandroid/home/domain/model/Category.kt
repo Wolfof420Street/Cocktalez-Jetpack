@@ -1,4 +1,4 @@
-package com.wolf.cocktalezandroid.home.domain
+package com.wolf.cocktalezandroid.home.domain.model
 
 import com.google.gson.annotations.SerializedName
 

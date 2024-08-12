@@ -1,9 +1,10 @@
 package com.wolf.cocktalezandroid.ingredients.data.domain.network.dto
 
-import Drinks
+
+import Ingredient
 import com.google.gson.annotations.SerializedName
 
 data class IngredientsResponse(
     @SerializedName("drinks")
-    val categories: List<Drinks>
+    val ingredients: List<Ingredient>
 )

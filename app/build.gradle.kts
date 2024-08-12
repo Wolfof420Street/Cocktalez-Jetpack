@@ -100,6 +100,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.appcompat)
+
     // Room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
@@ -157,6 +158,11 @@ dependencies {
     // Swipe to refresh
     implementation(libs.accompanist.swiperefresh)
 
+    //Lottie
+    implementation(libs.lottie.compose)
+
     // DataStore
     implementation(libs.datastore.preferences)
+
+
 }
