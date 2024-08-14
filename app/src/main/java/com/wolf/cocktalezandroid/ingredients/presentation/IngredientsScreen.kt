@@ -12,9 +12,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-
 import androidx.compose.foundation.layout.Column
-
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -68,6 +66,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.CocktailByIngredientScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.wolf.cocktalezAndroid.R
 import com.wolf.cocktalezandroid.home.presentation.LoadingScreen
@@ -95,6 +94,11 @@ fun IngredientsScreen(
             when (event) {
                 is IngredientsScreenUiEvents.OnIngredientTapped -> {
                     // Handle ingredient tap
+                    navigator.navigate(
+                        CocktailByIngredientScreenDestination(
+                           event.drink
+                        )
+                    )
                 }
                 is IngredientsScreenUiEvents.PageChanged -> {
                     viewModel.onPageChanged(event.pageIndex)
@@ -253,7 +257,11 @@ fun IngredientsScreenContent(
                             ) {
                                 BottomTextContent(
                                     ingredient = it,
-                                    onIngredientTap = {},
+                                    onIngredientTap = {
+                                      onEvent(IngredientsScreenUiEvents.OnIngredientTapped(
+                                          it
+                                      ))
+                                    },
                                     currentPage = state.pageIndex,
                                     pageCount = ingredients.itemCount,
                                     shortMode = shortMode
@@ -270,7 +278,7 @@ fun IngredientsScreenContent(
 @Composable
 fun BottomTextContent(
     ingredient: Ingredient,
-    onIngredientTap: (Int) -> Unit,
+    onIngredientTap: (String) -> Unit,
     currentPage: Int,
     pageCount: Int,
     shortMode: Boolean,
@@ -297,7 +305,7 @@ fun BottomTextContent(
                 .semantics(mergeDescendants = true) {
                     this.role = Role.Button
                     this.onClick {
-                        onIngredientTap(currentPage)
+                        onIngredientTap(ingredient.strIngredient)
                         true
                     }
                 }
@@ -325,7 +333,7 @@ fun BottomTextContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { onIngredientTap(currentPage) },
+            onClick = { onIngredientTap(ingredient.strIngredient) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("View Cocktails")

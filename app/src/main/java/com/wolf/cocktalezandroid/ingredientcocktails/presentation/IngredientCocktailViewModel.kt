@@ -1,10 +1,9 @@
-package com.wolf.cocktalezandroid.glass.presentation
+package com.wolf.cocktalezandroid.ingredientcocktails.presentation
 
-import Glass
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wolf.cocktalezandroid.common.domain.repository.PreferenceRepository
-import com.wolf.cocktalezandroid.glass.domain.repository.GlassRepository
+import com.wolf.cocktalezandroid.ingredientcocktails.domain.repository.IngredientCocktailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,14 +14,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class GlassViewModel @Inject constructor(
+class IngredientCocktailViewModel @Inject constructor(
     private val preferenceRepository: PreferenceRepository,
-    private val glassRepository: GlassRepository
+    private val ingredientCocktailRepository: IngredientCocktailRepository
 ) : ViewModel() {
 
-    private val _glassUiState = MutableStateFlow(GlassScreenUiState())
+    private val _ingredientCocktailUiState = MutableStateFlow(IngredientCocktailUiState())
 
-    val glassUiState = _glassUiState.asStateFlow()
+    val ingredientCocktailUiState = _ingredientCocktailUiState.asStateFlow()
 
     val theme = preferenceRepository.getTheme()
         .stateIn(
@@ -30,39 +29,26 @@ class GlassViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = 0,
         )
+
     fun updateTheme(themeValue: Int) {
         viewModelScope.launch {
             preferenceRepository.saveTheme(themeValue)
         }
     }
 
-    init {
-        getGlasses()
-    }
-
-    private fun getGlasses() {
-        _glassUiState.update {
-            it.copy(
-                glasses = glassRepository.getGlasses()
+    fun getCocktailsByIngredient(ingredient: String) {
+        viewModelScope.launch {
+            val result = ingredientCocktailRepository.getGlassesByIngredients(
+                ingredient
             )
-        }
-    }
 
-    fun refresh() {
-        getGlasses()
-    }
-
-
-    fun selectGlass(glass: Glass) {
-        _glassUiState.update {
-            if (it.selectedGlass == glass) {
-                it.copy(selectedGlass = null)  // Deselect if it's already selected
-            } else {
-                it.copy(selectedGlass = glass)
+            _ingredientCocktailUiState.update {
+                it.copy(
+                    cocktails = result
+                )
             }
+
+
         }
     }
-
-
-
 }

@@ -2,4 +2,5 @@
     <string name="app_name">Cocktalez Android</string>
     <string name="app_header">Mix and Sip: Unleash the Magic of Spirited Concoctions! 🍹✨</string>
     <string name="ingredient_header">Ingredients</string>
+    <string name="glass_header">Glasses</string>
 </resources>

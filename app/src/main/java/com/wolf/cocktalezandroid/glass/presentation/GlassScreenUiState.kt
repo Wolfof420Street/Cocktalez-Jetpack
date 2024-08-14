@@ -12,5 +12,7 @@ data class GlassScreenUiState (
 
     val pageIndex: Int = 0,
 
+    val selectedGlass : Glass? = null
+
 
 )

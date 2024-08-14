@@ -16,7 +16,11 @@ import com.wolf.cocktalezandroid.common.util.Constants.DATABASE_NAME
 import com.wolf.cocktalezandroid.favorites.local.FavoritesDatabase
 import com.wolf.cocktalezandroid.glass.data.domain.respository.GlassRepositoryImpl
 import com.wolf.cocktalezandroid.glass.domain.repository.GlassRepository
+import com.wolf.cocktalezandroid.glassescocktails.data.domain.repository.GlassCocktailsRepositoryImpl
+import com.wolf.cocktalezandroid.glassescocktails.domain.repository.GlassCocktailRepository
 import com.wolf.cocktalezandroid.home.data.repository.CocktailsRepository
+import com.wolf.cocktalezandroid.ingredientcocktails.data.domain.repository.IngredientCocktailRepositoryImpl
+import com.wolf.cocktalezandroid.ingredientcocktails.domain.repository.IngredientCocktailRepository
 import com.wolf.cocktalezandroid.ingredients.data.domain.respository.IngredientsRepositoryImpl
 import com.wolf.cocktalezandroid.ingredients.domain.repository.IngredientsRepository
 import dagger.Module
@@ -89,6 +93,16 @@ object AppModule {
     @Singleton
     fun provideGlassRepository(api: CocktailDbApi): GlassRepository =
         GlassRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideGlassCocktailRepository(api: CocktailDbApi): GlassCocktailRepository =
+        GlassCocktailsRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideIngredientCocktailRepository(api: CocktailDbApi): IngredientCocktailRepository =
+        IngredientCocktailRepositoryImpl(api)
 
 
     @Provides
