@@ -27,7 +27,7 @@ class CocktailDetailsViewModel @Inject constructor(
 
     fun getCocktailDetails(cocktailId: String) {
         viewModelScope.launch {
-            _cocktailDetailsUiState.update { it.copy(isLoading = true) }
+            _cocktailDetailsUiState.update {it.copy(isLoading = true)}
             when (val result = repository.getCocktailDetails(cocktailId)) {
                 is AppState.Error -> {
                     _cocktailDetailsUiState.update {

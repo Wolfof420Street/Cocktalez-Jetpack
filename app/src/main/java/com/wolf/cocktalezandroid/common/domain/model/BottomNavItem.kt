@@ -22,7 +22,7 @@ sealed class BottomNavItem(
     )
     data object Glasses: BottomNavItem(
         title = "Glasses",
-        icon = R.drawable.baseline_1k_24,
+        icon = R.drawable.wine_bar,
         route = GlassScreenDestination.route
     )
 

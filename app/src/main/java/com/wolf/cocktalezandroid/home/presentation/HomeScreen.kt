@@ -7,16 +7,13 @@ import android.content.Context
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,13 +22,14 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -56,13 +54,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -77,11 +78,13 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.CocktailDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.wolf.cocktalezAndroid.R
+import com.wolf.cocktalezandroid.common.presentation.theme.CardDarkColor
+import com.wolf.cocktalezandroid.common.presentation.theme.CardLightColor
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.math.PI
-import kotlin.math.absoluteValue
+import kotlin.math.abs
 
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -210,15 +213,16 @@ fun SearchBar(
     TextField(
         value = searchQuery,
         onValueChange = onSearchQueryChanged,
-        placeholder = { Text("Search for Cocktails") },
+        placeholder = { Text("Search for Cocktails", color = Color.Gray) }, // Adjust color as needed
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp ,
-                    vertical = 16.dp
-                ),
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         shape = RoundedCornerShape(30.dp),
-        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
+        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null,
+            tint = Color.Gray) }, // Adjust icon color
+
     )
+
 }
 
 
@@ -291,7 +295,6 @@ fun TabbedContent(
                 0 -> PopularCocktails(
                     cardHeight = cardHeight,
                     cardWidth = cardWidth,
-                    normalizedOffset = normalizedOffset,
                     items = popularCocktails,
                     onClick = onClick,
                     animatedVisibilityScope = animatedVisibilityScope
@@ -301,13 +304,11 @@ fun TabbedContent(
                     onClick = onClick,
                     cardHeight = cardHeight,
                     cardWidth = cardWidth,
-                    normalizedOffset = normalizedOffset,
                     animatedVisibilityScope = animatedVisibilityScope
                 )
                 2 -> NonAlcoholicCocktails(
                     cardHeight = cardHeight,
                     cardWidth = cardWidth,
-                    normalizedOffset = normalizedOffset,
                     items = nonAlcoholicCocktails,
                     onClick = onClick,
                     animatedVisibilityScope = animatedVisibilityScope
@@ -321,23 +322,23 @@ fun TabbedContent(
 fun NonAlcoholicCocktails(
     items: LazyPagingItems<Drinks>,
     onClick: (Drinks) -> Unit,
-    normalizedOffset : Float,
-    cardHeight : Dp,
-    cardWidth : Dp,
+    cardHeight: Dp,
+    cardWidth: Dp,
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-
-
-    CardRow(items = items,
-        modifier = Modifier.fillMaxWidth(),
-        content = {
+    CardRow(
+        items = items,
+        cardHeight = cardHeight,
+        cardWidth = cardWidth,
+        content = { item, normalizedOffset ->
             Rotation3d(
                 rotationX = 0f,
-                rotationY = normalizedOffset * 20,
-                rotationZ = 0f) {
+                rotationY = normalizedOffset * 20f,
+                rotationZ = 0f
+            ) {
                 CocktailCardRenderer(
                     offset = normalizedOffset,
-                    cocktail = it,
+                    cocktail = item,
                     cardWidth = cardWidth,
                     cardHeight = cardHeight,
                     onClick = onClick
@@ -351,22 +352,23 @@ fun NonAlcoholicCocktails(
 fun AlcoholicCocktails(
     items: LazyPagingItems<Drinks>,
     onClick: (Drinks) -> Unit,
-    normalizedOffset : Float,
-    cardHeight : Dp,
-    cardWidth : Dp,
+    cardHeight: Dp,
+    cardWidth: Dp,
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-
-    CardRow(items = items,
-        modifier = Modifier.fillMaxWidth(),
-        content = {
+    CardRow(
+        items = items,
+        cardHeight = cardHeight,
+        cardWidth = cardWidth,
+        content = { item, normalizedOffset ->
             Rotation3d(
                 rotationX = 0f,
-                rotationY = normalizedOffset * 20,
-                rotationZ = 0f) {
+                rotationY = normalizedOffset * 20f,
+                rotationZ = 0f
+            ) {
                 CocktailCardRenderer(
                     offset = normalizedOffset,
-                    cocktail = it,
+                    cocktail = item,
                     cardWidth = cardWidth,
                     cardHeight = cardHeight,
                     onClick = onClick
@@ -380,24 +382,26 @@ fun AlcoholicCocktails(
 fun PopularCocktails(
     items: LazyPagingItems<CocktailObject>,
     onClick: (Drinks) -> Unit,
-    normalizedOffset : Float,
-    cardHeight : Dp,
-    cardWidth : Dp,
+    cardHeight: Dp,
+    cardWidth: Dp,
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-    CardRow(items = items,
-        modifier = Modifier.fillMaxWidth(),
-        content = {
+    CardRow(
+        items = items,
+        cardHeight = cardHeight,
+        cardWidth = cardWidth,
+        content = { item, normalizedOffset ->
             Rotation3d(
                 rotationX = 0f,
-                rotationY = normalizedOffset * 20,
-                rotationZ = 0f) {
+                rotationY = normalizedOffset * 20f,
+                rotationZ = 0f
+            ) {
                 CocktailCardRenderer(
                     offset = normalizedOffset,
-                     cocktail = Drinks(
-                        strDrink = it.strDrink,
-                        strDrinkThumb = it.strDrinkThumb,
-                        idDrink = it.idDrink
+                    cocktail = Drinks(
+                        strDrink = item.strDrink,
+                        strDrinkThumb = item.strDrinkThumb,
+                        idDrink = item.idDrink
                     ),
                     cardWidth = cardWidth,
                     cardHeight = cardHeight,
@@ -406,126 +410,109 @@ fun PopularCocktails(
             }
         }
     )
-
 }
 
 
+
 @Composable
-fun <T : Any> CardRow (
+fun <T : Any> CardRow(
     modifier: Modifier = Modifier,
     items: LazyPagingItems<T>,
-    content: @Composable (T) -> Unit,
+    cardHeight: Dp,
+    cardWidth: Dp,
+    maxRotation: Float = 20f,
+    content: @Composable (T, Float) -> Unit,
 ) {
+    val pagerState = rememberPagerState(
+        pageCount = { items.itemCount }
+    )
+
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(210.dp),
+            .height(cardHeight + 60.dp), // Adjusted height to fit cards and parallax effect
         contentAlignment = Alignment.Center
     ) {
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(items.itemCount) {
-                val item = items[it]
+        if (items.itemCount > 0) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 24.dp), // Padding to add space on edges
+                pageSize = PageSize.Fixed(cardWidth),
+                beyondViewportPageCount = 3,
+                pageSpacing = 16.dp // Space between items
+            ) { page ->
+
+                val normalizedOffset = ((pagerState.currentPage - page) +
+                        pagerState.currentPageOffsetFraction)
+
+                // Scale the card based on the offset
+                val scale = 1f - 0.15f * abs(normalizedOffset)
+
+                val item = items[page]
                 if (item != null) {
-                    content(item)
+                    Box(
+                        modifier = Modifier
+                            .graphicsLayer {
+                                scaleX = scale
+                                scaleY = scale
+                                alpha = scale
+                            }
+                            .padding(horizontal = 8.dp)
+                    ) {
+                        content(item, normalizedOffset)
+                    }
                 }
             }
-            items.loadState.let { loadState ->
-                when {
-                    loadState.refresh is LoadState.Loading -> {
-                        item {
-                            Row(
-                                modifier = Modifier
-                                    .fillParentMaxWidth()
-                                    .align(Alignment.Center),
-                                horizontalArrangement = Arrangement.Center,
-                            ) {
-                               LoadingScreen()
+        }
+
+        items.loadState.let { loadState ->
+            when {
+                loadState.refresh is LoadState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+
+                loadState.refresh is LoadState.NotLoading && items.itemCount < 1 -> {
+                    Text(
+                        text = "No data available",
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                loadState.refresh is LoadState.Error -> {
+                    Text(
+                        text = when ((loadState.refresh as LoadState.Error).error) {
+                            is HttpException -> {
+                                "Oops, something went wrong!"
                             }
-                        }
-                    }
-
-                    loadState.refresh is LoadState.NotLoading && items.itemCount < 1 -> {
-                        item {
-                            Row(
-                                modifier = Modifier
-                                    .fillParentMaxWidth()
-                                    .align(Alignment.Center),
-                                horizontalArrangement = Arrangement.Center,
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    text = "No data available",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    textAlign = TextAlign.Center,
-                                )
+                            is IOException -> {
+                                "Couldn't reach server, check your internet connection!"
                             }
-                        }
-                    }
-
-
-                    loadState.refresh is LoadState.Error -> {
-                        item {
-                            Row(
-                                modifier = Modifier
-                                    .fillParentMaxWidth()
-                                    .align(Alignment.Center),
-                                horizontalArrangement = Arrangement.Center,
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    text = when ((loadState.refresh as LoadState.Error).error) {
-                                        is HttpException -> {
-                                            "Oops, something went wrong!"
-                                        }
-
-                                        is IOException -> {
-                                            "Couldn't reach server, check your internet connection!"
-                                        }
-
-                                        else -> {
-                                            "Unknown error occurred"
-                                        }
-                                    },
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.primary,
-                                )
+                            else -> {
+                                "Unknown error occurred"
                             }
-                        }
-                    }
+                        },
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
 
-                    loadState.append is LoadState.Loading -> {
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                               LoadingScreen()
-                            }
-                        }
-                    }
+                loadState.append is LoadState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
 
-                    loadState.append is LoadState.Error -> {
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    text = "An error occurred",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    textAlign = TextAlign.Center,
-                                )
-                            }
-                        }
-                    }
+                loadState.append is LoadState.Error -> {
+                    Text(
+                        text = "An error occurred",
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                    )
                 }
             }
         }
@@ -536,22 +523,25 @@ fun <T : Any> CardRow (
 
 @Composable
 fun Rotation3d(
-    rotationX: Float,
-    rotationY: Float,
-    rotationZ: Float,
+    rotationX: Float = 0f,
+    rotationY: Float = 0f,
+    rotationZ: Float = 0f,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     val degreesToRadians = PI / 180f
-    val rotationXed = rotationX * degreesToRadians.toFloat()
-    val rotationYed = rotationY * degreesToRadians.toFloat()
-    val rotationZed = rotationZ * degreesToRadians.toFloat()
+    val rotationXInRadians = rotationX * degreesToRadians.toFloat()
+    val rotationYInRadians = rotationY * degreesToRadians.toFloat()
+    val rotationZInRadians = rotationZ * degreesToRadians.toFloat()
 
     Box(
         modifier = modifier.graphicsLayer {
-            this.rotationX = rotationXed
-            this.rotationY = rotationYed
-            this.rotationZ = rotationZed
+            // Set perspective to create a 3D effect
+            this.transformOrigin = TransformOrigin.Center
+            this.rotationX = rotationXInRadians
+            this.rotationY = rotationYInRadians
+            this.rotationZ = rotationZInRadians
+            this.cameraDistance = 8 * density // Adjust camera distance for more depth
         }
     ) {
         content()
@@ -566,50 +556,64 @@ fun CocktailCardRenderer(
     cocktail: Drinks,
     onClick: (Drinks) -> Unit
 ) {
-    // Animate the rotation based on the offset value
-    val rotationY by animateFloatAsState(
-        targetValue = offset * 30f,
-        animationSpec = tween(durationMillis = 300, easing = LinearOutSlowInEasing),
-        label = ""
-    )
+    val isDarkTheme = isSystemInDarkTheme()
+    val backgroundColor = if (isDarkTheme) CardDarkColor else CardLightColor
 
     Box(
         modifier = Modifier
             .width(cardWidth)
-            .height(cardHeight)
-            .padding(12.dp)
-            .graphicsLayer(rotationY = rotationY) // Apply the rotation animation
-            .clickable { onClick(cocktail) },
-        contentAlignment = Alignment.Center
+            .padding(top = 8.dp)
     ) {
-        // Card background
+        // Background and shadow
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(top = 30.dp, start = 12.dp, end = 12.dp, bottom = 12.dp)
                 .background(
-                    color = Color.Gray,
+                    color = backgroundColor,
                     shape = RoundedCornerShape(8.dp)
                 )
                 .shadow(
-                    elevation = 4.dp * offset.absoluteValue,
-                    shape = RoundedCornerShape(8.dp)
+                    elevation = 10.dp + 6.dp * abs(offset),
+                    shape = RoundedCornerShape(8.dp),
+                    clip = false
                 )
         )
 
-        // Cocktail image
-        CocktailImageLayer(
-            offset = offset,
-            cardWidth = cardWidth,
-            cardHeight = cardHeight,
-            strDrinkThumb = cocktail.strDrinkThumb
-        )
+        // Column for image and text
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top // Ensures image is at the top
+        ) {
+            // Cocktail image with parallax effect
+            Box(
+                modifier = Modifier
+                    .offset(y = (-15).dp)
+                    .clickable { onClick(cocktail) }
+            ) {
+                CocktailImageLayer(
+                    offset = offset,
+                    cardWidth = cardWidth,
+                    cardHeight = cardHeight,
+                    strDrinkThumb = cocktail.strDrinkThumb
+                )
+            }
 
-        // Cocktail data
-        CocktailData(
-            cardHeight = cardHeight,
-            strDrink = cocktail.strDrink
-        )
+            // Spacer to ensure the text is pushed to the bottom
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Cocktail data (text)
+            Text(
+                text = cocktail.strDrink,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontSize = 18.sp,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.W600
+                ),
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 30.dp)
+            )
+        }
     }
 }
 
@@ -621,18 +625,33 @@ fun CocktailImageLayer(
     strDrinkThumb: String
 ) {
     val maxParallax = 30.dp
-    val globalOffset = offset * maxParallax.value * 2
+    val globalOffset = with(LocalDensity.current) { offset * maxParallax.toPx() * 2 }
     val cardPadding = 28.dp
     val containerWidth = cardWidth - cardPadding
 
     Box(
         modifier = Modifier
-            .height(cardHeight + 60.dp)
+            .height(cardHeight * 0.6f)
             .width(containerWidth)
     ) {
-        PositionedLayer(strDrinkThumb, containerWidth.value * 0.8f, maxParallax * 0.1f, globalOffset)
-        PositionedLayer(strDrinkThumb, containerWidth.value * 0.9f, maxParallax * 0.6f, globalOffset)
-        PositionedLayer(strDrinkThumb, containerWidth.value * 0.9f, maxParallax, globalOffset)
+        PositionedLayer(
+            path = strDrinkThumb,
+            width = containerWidth.value * 0.8f,
+            maxOffset = maxParallax * 0.1f,
+            globalOffset = globalOffset
+        )
+        PositionedLayer(
+            path = strDrinkThumb,
+            width = containerWidth.value * 0.9f,
+            maxOffset = maxParallax * 0.6f,
+            globalOffset = globalOffset
+        )
+        PositionedLayer(
+            path = strDrinkThumb,
+            width = containerWidth.value * 0.9f,
+            maxOffset = maxParallax,
+            globalOffset = globalOffset
+        )
     }
 }
 
@@ -644,12 +663,12 @@ fun PositionedLayer(
     globalOffset: Float
 ) {
     val context = LocalContext.current
+
+    val offsetX = ((width / 2) - width / 2 - globalOffset * maxOffset.value).dp
+
     Box(
         modifier = Modifier
-            .offset(
-                x = ((width / 2) - width / 2 - globalOffset * maxOffset.value).dp,
-                y = (width * 0.45f).dp
-            )
+            .offset(x = offsetX, y = (width * 0.45f).dp)
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context)
@@ -662,23 +681,8 @@ fun PositionedLayer(
     }
 }
 
-@Composable
-fun CocktailData(cardHeight: Dp, strDrink: String) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Spacer(modifier = Modifier.height(cardHeight * 0.4f))
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = strDrink,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 20.dp)
-        )
-    }
-}
+
+
 
 @Composable
 fun LoadingScreen() {
